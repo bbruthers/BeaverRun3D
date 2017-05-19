@@ -1,0 +1,14 @@
+-d docs
+-use
+-splitindex
+-private
+-author
+-version
+-nodeprecated
+-nosince
+-source 1.7
+-linksource
+-sourcepath src
+-link "http://docs.oracle.com/javase/7/docs/api"
+-link "http://download.java.net/media/java3d/javadoc/1.5.2"
+-subpackages edu.mccc.cos210.br3d
