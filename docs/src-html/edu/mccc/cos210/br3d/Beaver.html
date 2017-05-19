@@ -1,0 +1,893 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package edu.mccc.cos210.br3d;<a name="line.1"></a>
+<span class="sourceLineNo">002</span>import javax.media.j3d.Alpha;<a name="line.2"></a>
+<span class="sourceLineNo">003</span>import javax.media.j3d.Appearance;<a name="line.3"></a>
+<span class="sourceLineNo">004</span>import javax.media.j3d.BoundingSphere;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import javax.media.j3d.Bounds;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import javax.media.j3d.Geometry;<a name="line.6"></a>
+<span class="sourceLineNo">007</span>import javax.media.j3d.GeometryArray;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import javax.media.j3d.Group;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import javax.media.j3d.Material;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import javax.media.j3d.PositionInterpolator;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import javax.media.j3d.QuadArray;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import javax.media.j3d.Shape3D;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import javax.media.j3d.TextureAttributes;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import javax.media.j3d.Transform3D;<a name="line.14"></a>
+<span class="sourceLineNo">015</span>import javax.media.j3d.TransformGroup;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>import javax.vecmath.AxisAngle4f;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>import javax.vecmath.Color3f;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>import javax.vecmath.Point3d;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>import javax.vecmath.Point3f;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import javax.vecmath.TexCoord2f;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import javax.vecmath.Vector3f;<a name="line.21"></a>
+<span class="sourceLineNo">022</span><a name="line.22"></a>
+<span class="sourceLineNo">023</span>import com.sun.j3d.utils.image.TextureLoader;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>public class Beaver extends Group {<a name="line.24"></a>
+<span class="sourceLineNo">025</span>        TransformGroup tgl;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>        TransformGroup tgr;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>        private Bounds infiniteBounds = new BoundingSphere(<a name="line.27"></a>
+<span class="sourceLineNo">028</span>                new Point3d(0.0, 0.0, 0.0),<a name="line.28"></a>
+<span class="sourceLineNo">029</span>                Double.MAX_VALUE<a name="line.29"></a>
+<span class="sourceLineNo">030</span>        );<a name="line.30"></a>
+<span class="sourceLineNo">031</span>        public Beaver() {<a name="line.31"></a>
+<span class="sourceLineNo">032</span>                QuadArray[] qa = new QuadArray[29];<a name="line.32"></a>
+<span class="sourceLineNo">033</span>                for (int i = 0; i &lt; qa.length; i++) {<a name="line.33"></a>
+<span class="sourceLineNo">034</span>                        qa[i] = new QuadArray(<a name="line.34"></a>
+<span class="sourceLineNo">035</span>                                4,<a name="line.35"></a>
+<span class="sourceLineNo">036</span>                                QuadArray.COORDINATES |<a name="line.36"></a>
+<span class="sourceLineNo">037</span>                                        QuadArray.NORMALS |<a name="line.37"></a>
+<span class="sourceLineNo">038</span>                                        GeometryArray.TEXTURE_COORDINATE_2<a name="line.38"></a>
+<span class="sourceLineNo">039</span>                        );<a name="line.39"></a>
+<span class="sourceLineNo">040</span>                        qa[i].setCapability(Geometry.ALLOW_INTERSECT);<a name="line.40"></a>
+<span class="sourceLineNo">041</span>                        qa[i].setCapability(GeometryArray.ALLOW_COUNT_READ);<a name="line.41"></a>
+<span class="sourceLineNo">042</span>                        qa[i].setCapability(GeometryArray.ALLOW_FORMAT_READ);<a name="line.42"></a>
+<span class="sourceLineNo">043</span>                        qa[i].setCapability(GeometryArray.ALLOW_COORDINATE_READ);<a name="line.43"></a>
+<span class="sourceLineNo">044</span>                }<a name="line.44"></a>
+<span class="sourceLineNo">045</span>                QuadArray[] qal = new QuadArray[10];<a name="line.45"></a>
+<span class="sourceLineNo">046</span>                for (int i = 0; i &lt; qal.length; i++) {<a name="line.46"></a>
+<span class="sourceLineNo">047</span>                        qal[i] = new QuadArray(<a name="line.47"></a>
+<span class="sourceLineNo">048</span>                                4,<a name="line.48"></a>
+<span class="sourceLineNo">049</span>                                QuadArray.COORDINATES |<a name="line.49"></a>
+<span class="sourceLineNo">050</span>                                        QuadArray.NORMALS |<a name="line.50"></a>
+<span class="sourceLineNo">051</span>                                        GeometryArray.TEXTURE_COORDINATE_2<a name="line.51"></a>
+<span class="sourceLineNo">052</span>                        );<a name="line.52"></a>
+<span class="sourceLineNo">053</span>                        qal[i].setCapability(Geometry.ALLOW_INTERSECT);<a name="line.53"></a>
+<span class="sourceLineNo">054</span>                        qal[i].setCapability(GeometryArray.ALLOW_COUNT_READ);<a name="line.54"></a>
+<span class="sourceLineNo">055</span>                        qal[i].setCapability(GeometryArray.ALLOW_FORMAT_READ);<a name="line.55"></a>
+<span class="sourceLineNo">056</span>                        qal[i].setCapability(GeometryArray.ALLOW_COORDINATE_READ);<a name="line.56"></a>
+<span class="sourceLineNo">057</span>                }<a name="line.57"></a>
+<span class="sourceLineNo">058</span>                QuadArray[] qar = new QuadArray[10];<a name="line.58"></a>
+<span class="sourceLineNo">059</span>                for (int i = 0; i &lt; qar.length; i++) {<a name="line.59"></a>
+<span class="sourceLineNo">060</span>                        qar[i] = new QuadArray(<a name="line.60"></a>
+<span class="sourceLineNo">061</span>                                4,<a name="line.61"></a>
+<span class="sourceLineNo">062</span>                                QuadArray.COORDINATES |<a name="line.62"></a>
+<span class="sourceLineNo">063</span>                                        QuadArray.NORMALS |<a name="line.63"></a>
+<span class="sourceLineNo">064</span>                                        GeometryArray.TEXTURE_COORDINATE_2<a name="line.64"></a>
+<span class="sourceLineNo">065</span>                        );<a name="line.65"></a>
+<span class="sourceLineNo">066</span>                        qar[i].setCapability(Geometry.ALLOW_INTERSECT);<a name="line.66"></a>
+<span class="sourceLineNo">067</span>                        qar[i].setCapability(GeometryArray.ALLOW_COUNT_READ);<a name="line.67"></a>
+<span class="sourceLineNo">068</span>                        qar[i].setCapability(GeometryArray.ALLOW_FORMAT_READ);<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                        qar[i].setCapability(GeometryArray.ALLOW_COORDINATE_READ);<a name="line.69"></a>
+<span class="sourceLineNo">070</span>                }<a name="line.70"></a>
+<span class="sourceLineNo">071</span>                //front body 0<a name="line.71"></a>
+<span class="sourceLineNo">072</span>                Point3f[] p3fFB = new Point3f[4];<a name="line.72"></a>
+<span class="sourceLineNo">073</span>                p3fFB[0] = new Point3f(-0.3f, 0.8f, 0.1f);<a name="line.73"></a>
+<span class="sourceLineNo">074</span>                p3fFB[1] = new Point3f(-0.3f, 0.2f, 0.1f);<a name="line.74"></a>
+<span class="sourceLineNo">075</span>                p3fFB[2] = new Point3f(0.3f, 0.2f, 0.1f);<a name="line.75"></a>
+<span class="sourceLineNo">076</span>                p3fFB[3] = new Point3f(0.3f, 0.8f, 0.1f);<a name="line.76"></a>
+<span class="sourceLineNo">077</span>                //back body 1<a name="line.77"></a>
+<span class="sourceLineNo">078</span>                Point3f[] p3fBB = new Point3f[4];<a name="line.78"></a>
+<span class="sourceLineNo">079</span>                p3fBB[0] = new Point3f(0.3f, 0.8f, -0.1f);<a name="line.79"></a>
+<span class="sourceLineNo">080</span>                p3fBB[1] = new Point3f(0.3f, 0.2f, -0.1f);<a name="line.80"></a>
+<span class="sourceLineNo">081</span>                p3fBB[2] = new Point3f(-0.3f, 0.2f, -0.1f);<a name="line.81"></a>
+<span class="sourceLineNo">082</span>                p3fBB[3] = new Point3f(-0.3f, 0.8f, -0.1f);<a name="line.82"></a>
+<span class="sourceLineNo">083</span>                //body right side 2<a name="line.83"></a>
+<span class="sourceLineNo">084</span>                Point3f[] p3fBRS = new Point3f[4];<a name="line.84"></a>
+<span class="sourceLineNo">085</span>                p3fBRS[0] = new Point3f(-0.3f, 0.8f, -0.1f);<a name="line.85"></a>
+<span class="sourceLineNo">086</span>                p3fBRS[1] = new Point3f(-0.3f, 0.2f, -0.1f);<a name="line.86"></a>
+<span class="sourceLineNo">087</span>                p3fBRS[2] = new Point3f(-0.3f, 0.2f, 0.1f);<a name="line.87"></a>
+<span class="sourceLineNo">088</span>                p3fBRS[3] = new Point3f(-0.3f, 0.8f, 0.1f);<a name="line.88"></a>
+<span class="sourceLineNo">089</span>                //body left side 3<a name="line.89"></a>
+<span class="sourceLineNo">090</span>                Point3f[] p3fBLS = new Point3f[4];<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                p3fBLS[0] = new Point3f(0.3f, 0.8f, 0.1f);<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                p3fBLS[1] = new Point3f(0.3f, 0.2f, 0.1f);<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                p3fBLS[2] = new Point3f(0.3f, 0.2f, -0.1f);<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                p3fBLS[3] = new Point3f(0.3f, 0.8f, -0.1f);<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                //body top 4<a name="line.95"></a>
+<span class="sourceLineNo">096</span>                Point3f[] p3fBT = new Point3f[4];<a name="line.96"></a>
+<span class="sourceLineNo">097</span>                p3fBT[0] = new Point3f(-0.3f, 0.8f, -0.1f);<a name="line.97"></a>
+<span class="sourceLineNo">098</span>                p3fBT[1] = new Point3f(-0.3f, 0.8f, 0.1f);<a name="line.98"></a>
+<span class="sourceLineNo">099</span>                p3fBT[2] = new Point3f(0.3f, 0.8f, 0.1f);<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                p3fBT[3] = new Point3f(0.3f, 0.8f, -0.1f);<a name="line.100"></a>
+<span class="sourceLineNo">101</span>                //body bottom 5<a name="line.101"></a>
+<span class="sourceLineNo">102</span>                Point3f[] p3fBBot = new Point3f[4];<a name="line.102"></a>
+<span class="sourceLineNo">103</span>                p3fBBot[0] = new Point3f(0.3f, 0.2f, -0.1f);<a name="line.103"></a>
+<span class="sourceLineNo">104</span>                p3fBBot[1] = new Point3f(0.3f, 0.2f, 0.1f);<a name="line.104"></a>
+<span class="sourceLineNo">105</span>                p3fBBot[2] = new Point3f(-0.3f, 0.2f, 0.1f);<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                p3fBBot[3] = new Point3f(-0.3f, 0.2f, -0.1f);<a name="line.106"></a>
+<span class="sourceLineNo">107</span>                //head front 6<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                Point3f[] p3fHF = new Point3f[4];<a name="line.108"></a>
+<span class="sourceLineNo">109</span>                p3fHF[0] = new Point3f(-0.1f, 1.0f, 0.2f);<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                p3fHF[1] = new Point3f(-0.1f, 0.8f, 0.2f);<a name="line.110"></a>
+<span class="sourceLineNo">111</span>                p3fHF[2] = new Point3f(0.1f, 0.8f, 0.2f);<a name="line.111"></a>
+<span class="sourceLineNo">112</span>                p3fHF[3] = new Point3f(0.1f, 1.0f, 0.2f);<a name="line.112"></a>
+<span class="sourceLineNo">113</span>                //head back 7<a name="line.113"></a>
+<span class="sourceLineNo">114</span>                Point3f[] p3fHB = new Point3f[4];<a name="line.114"></a>
+<span class="sourceLineNo">115</span>                p3fHB[0] = new Point3f(0.1f, 1.0f, -0.2f);<a name="line.115"></a>
+<span class="sourceLineNo">116</span>                p3fHB[1] = new Point3f(0.1f, 0.8f, -0.2f);<a name="line.116"></a>
+<span class="sourceLineNo">117</span>                p3fHB[2] = new Point3f(-0.1f, 0.8f, -0.2f);<a name="line.117"></a>
+<span class="sourceLineNo">118</span>                p3fHB[3] = new Point3f(-0.1f, 1.0f, -0.2f);<a name="line.118"></a>
+<span class="sourceLineNo">119</span>                //head right side 8<a name="line.119"></a>
+<span class="sourceLineNo">120</span>                Point3f[] p3fHRS = new Point3f[4];<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                p3fHRS[0] = new Point3f(-0.1f, 1.0f, -0.2f);<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                p3fHRS[1] = new Point3f(-0.1f, 0.8f, -0.2f);<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                p3fHRS[2] = new Point3f(-0.1f, 0.8f, 0.2f);<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                p3fHRS[3] = new Point3f(-0.1f, 1.0f, 0.2f);<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                //head left side 9<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                Point3f[] p3fHLS = new Point3f[4];<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                p3fHLS[0] = new Point3f(0.1f, 1.0f, 0.2f);<a name="line.127"></a>
+<span class="sourceLineNo">128</span>                p3fHLS[1] = new Point3f(0.1f, 0.8f, 0.2f);<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                p3fHLS[2] = new Point3f(0.1f, 0.8f, -0.2f);<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                p3fHLS[3] = new Point3f(0.1f, 1.0f, -0.2f);<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                //head top 10<a name="line.131"></a>
+<span class="sourceLineNo">132</span>                Point3f[] p3fHT = new Point3f[4];<a name="line.132"></a>
+<span class="sourceLineNo">133</span>                p3fHT[0] = new Point3f(-0.1f, 1.0f, -0.2f);<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                p3fHT[1] = new Point3f(-0.1f, 1.0f, 0.2f);<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                p3fHT[2] = new Point3f(0.1f, 1.0f, 0.2f);<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                p3fHT[3] = new Point3f(0.1f, 1.0f, -0.2f);<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                //head bottom 11 were backwards<a name="line.137"></a>
+<span class="sourceLineNo">138</span>                Point3f[] p3fHBot = new Point3f[4];<a name="line.138"></a>
+<span class="sourceLineNo">139</span>                p3fHBot[0] = new Point3f(0.1f, 0.8f, -0.2f);<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                p3fHBot[1] = new Point3f(0.1f, 0.8f, 0.2f);<a name="line.140"></a>
+<span class="sourceLineNo">141</span>                p3fHBot[2] = new Point3f(-0.1f, 0.8f, 0.2f);<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                p3fHBot[3] = new Point3f(-0.1f, 0.8f, -0.2f);<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                //right leg front  12<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                Point3f[] p3fLFR = new Point3f[4];<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                p3fLFR[0] = new Point3f(-0.2f, 0.2f, 0.05f);<a name="line.145"></a>
+<span class="sourceLineNo">146</span>                p3fLFR[1] = new Point3f(-0.2f, 0.1f, 0.05f);<a name="line.146"></a>
+<span class="sourceLineNo">147</span>                p3fLFR[2] = new Point3f(-0.1f, 0.1f, 0.05f);<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                p3fLFR[3] = new Point3f(-0.1f, 0.2f, 0.05f);<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                //right leg back  13<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                Point3f[] p3fLBR = new Point3f[4];<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                p3fLBR[0] = new Point3f(-0.1f, 0.2f, -0.05f);<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                p3fLBR[1] = new Point3f(-0.1f, 0.1f, -0.05f);<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                p3fLBR[2] = new Point3f(-0.2f, 0.1f, -0.05f);<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                p3fLBR[3] = new Point3f(-0.2f, 0.2f, -0.05f);<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                //right leg right side 14<a name="line.155"></a>
+<span class="sourceLineNo">156</span>                Point3f[] p3fRLRS = new Point3f[4];<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                p3fRLRS[0] = new Point3f(-0.2f, 0.2f, -0.05f);<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                p3fRLRS[1] = new Point3f(-0.2f, 0.1f, -0.05f);<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                p3fRLRS[2] = new Point3f(-0.2f, 0.1f, 0.05f);<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                p3fRLRS[3] = new Point3f(-0.2f, 0.2f, 0.05f);<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                //right leg left side 15<a name="line.161"></a>
+<span class="sourceLineNo">162</span>                Point3f[] p3fRLLS = new Point3f[4];<a name="line.162"></a>
+<span class="sourceLineNo">163</span>                p3fRLLS[0] = new Point3f(-0.1f, 0.2f, 0.05f);<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                p3fRLLS[1] = new Point3f(-0.1f, 0.1f, 0.05f);<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                p3fRLLS[2] = new Point3f(-0.1f, 0.1f, -0.05f);<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                p3fRLLS[3] = new Point3f(-0.1f, 0.2f, -0.05f);<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                //left leg front 16<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                Point3f[] p3fLLF = new Point3f[4];<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                p3fLLF[0] = new Point3f(0.1f, 0.2f, 0.05f);<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                p3fLLF[1] = new Point3f(0.1f, 0.1f, 0.05f);<a name="line.170"></a>
+<span class="sourceLineNo">171</span>                p3fLLF[2] = new Point3f(0.2f, 0.1f, 0.05f);<a name="line.171"></a>
+<span class="sourceLineNo">172</span>                p3fLLF[3] = new Point3f(0.2f, 0.2f, 0.05f);<a name="line.172"></a>
+<span class="sourceLineNo">173</span>                //left leg back 17<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                Point3f[] p3fLLB = new Point3f[4];<a name="line.174"></a>
+<span class="sourceLineNo">175</span>                p3fLLB[0] = new Point3f(0.2f, 0.2f, -0.05f);<a name="line.175"></a>
+<span class="sourceLineNo">176</span>                p3fLLB[1] = new Point3f(0.2f, 0.1f, -0.05f);<a name="line.176"></a>
+<span class="sourceLineNo">177</span>                p3fLLB[2] = new Point3f(0.1f, 0.1f, -0.05f);<a name="line.177"></a>
+<span class="sourceLineNo">178</span>                p3fLLB[3] = new Point3f(0.1f, 0.2f, -0.05f);<a name="line.178"></a>
+<span class="sourceLineNo">179</span>                //left leg right side 18<a name="line.179"></a>
+<span class="sourceLineNo">180</span>                Point3f[] p3fLLRS = new Point3f[4];<a name="line.180"></a>
+<span class="sourceLineNo">181</span>                p3fLLRS[0] = new Point3f(0.1f, 0.2f, -0.05f);<a name="line.181"></a>
+<span class="sourceLineNo">182</span>                p3fLLRS[1] = new Point3f(0.1f, 0.1f, -0.05f);<a name="line.182"></a>
+<span class="sourceLineNo">183</span>                p3fLLRS[2] = new Point3f(0.1f, 0.1f, 0.05f);<a name="line.183"></a>
+<span class="sourceLineNo">184</span>                p3fLLRS[3] = new Point3f(0.1f, 0.2f, 0.05f);<a name="line.184"></a>
+<span class="sourceLineNo">185</span>                //left leg left side 19<a name="line.185"></a>
+<span class="sourceLineNo">186</span>                Point3f[] p3fLLLS = new Point3f[4];<a name="line.186"></a>
+<span class="sourceLineNo">187</span>                p3fLLLS[0] = new Point3f(0.2f, 0.2f, 0.05f);<a name="line.187"></a>
+<span class="sourceLineNo">188</span>                p3fLLLS[1] = new Point3f(0.2f, 0.1f, 0.05f);<a name="line.188"></a>
+<span class="sourceLineNo">189</span>                p3fLLLS[2] = new Point3f(0.2f, 0.1f, -0.05f);<a name="line.189"></a>
+<span class="sourceLineNo">190</span>                p3fLLLS[3] = new Point3f(0.2f, 0.2f, -0.05f);<a name="line.190"></a>
+<span class="sourceLineNo">191</span>                //right foot front 20<a name="line.191"></a>
+<span class="sourceLineNo">192</span>                Point3f[] p3fRFF = new Point3f[4];<a name="line.192"></a>
+<span class="sourceLineNo">193</span>                p3fRFF[0] = new Point3f(-0.2f, 0.1f, 0.2f);<a name="line.193"></a>
+<span class="sourceLineNo">194</span>                p3fRFF[1] = new Point3f(-0.2f, 0.0f, 0.2f);<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                p3fRFF[2] = new Point3f(-0.1f, 0.0f, 0.2f);<a name="line.195"></a>
+<span class="sourceLineNo">196</span>                p3fRFF[3] = new Point3f(-0.1f, 0.1f, 0.2f);<a name="line.196"></a>
+<span class="sourceLineNo">197</span>                //right foot back 21<a name="line.197"></a>
+<span class="sourceLineNo">198</span>                Point3f[] p3fRFB = new Point3f[4];<a name="line.198"></a>
+<span class="sourceLineNo">199</span>                p3fRFB[0] = new Point3f(-0.1f, 0.1f, -0.05f);<a name="line.199"></a>
+<span class="sourceLineNo">200</span>                p3fRFB[1] = new Point3f(-0.1f, 0.0f, -0.05f);<a name="line.200"></a>
+<span class="sourceLineNo">201</span>                p3fRFB[2] = new Point3f(-0.2f, 0.0f, -0.05f);<a name="line.201"></a>
+<span class="sourceLineNo">202</span>                p3fRFB[3] = new Point3f(-0.2f, 0.1f, -0.05f);<a name="line.202"></a>
+<span class="sourceLineNo">203</span>                //right foot right side 22<a name="line.203"></a>
+<span class="sourceLineNo">204</span>                Point3f[] p3fRFRS = new Point3f[4];<a name="line.204"></a>
+<span class="sourceLineNo">205</span>                p3fRFRS[0] = new Point3f(-0.2f, 0.1f, -0.05f);<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                p3fRFRS[1] = new Point3f(-0.2f, 0.0f, -0.05f);<a name="line.206"></a>
+<span class="sourceLineNo">207</span>                p3fRFRS[2] = new Point3f(-0.2f, 0.0f, 0.2f);<a name="line.207"></a>
+<span class="sourceLineNo">208</span>                p3fRFRS[3] = new Point3f(-0.2f, 0.1f, 0.2f);<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                //right foot left side 23<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                Point3f[] p3fRFLS = new Point3f[4];<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                p3fRFLS[0] = new Point3f(-0.1f, 0.1f, 0.2f);<a name="line.211"></a>
+<span class="sourceLineNo">212</span>                p3fRFLS[1] = new Point3f(-0.1f, 0.0f, 0.2f);<a name="line.212"></a>
+<span class="sourceLineNo">213</span>                p3fRFLS[2] = new Point3f(-0.1f, 0.0f, -0.05f);<a name="line.213"></a>
+<span class="sourceLineNo">214</span>                p3fRFLS[3] = new Point3f(-0.1f, 0.1f, -0.05f);<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                //right foot top 24<a name="line.215"></a>
+<span class="sourceLineNo">216</span>                Point3f[] p3fRFT = new Point3f[4];<a name="line.216"></a>
+<span class="sourceLineNo">217</span>                p3fRFT[0] = new Point3f(-0.1f, 0.1f, -0.05f);<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                p3fRFT[1] = new Point3f(-0.2f, 0.1f, -0.05f);<a name="line.218"></a>
+<span class="sourceLineNo">219</span>                p3fRFT[2] = new Point3f(-0.2f, 0.1f, 0.2f);<a name="line.219"></a>
+<span class="sourceLineNo">220</span>                p3fRFT[3] = new Point3f(-0.1f, 0.1f, 0.2f);<a name="line.220"></a>
+<span class="sourceLineNo">221</span>                //right foot bottom 25<a name="line.221"></a>
+<span class="sourceLineNo">222</span>                Point3f[] p3fRFBot = new Point3f[4];<a name="line.222"></a>
+<span class="sourceLineNo">223</span>                p3fRFBot[0] = new Point3f(-0.2f, 0.0f, -0.05f);<a name="line.223"></a>
+<span class="sourceLineNo">224</span>                p3fRFBot[1] = new Point3f(-0.1f, 0.0f, -0.05f);<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                p3fRFBot[2] = new Point3f(-0.1f, 0.0f, 0.2f);<a name="line.225"></a>
+<span class="sourceLineNo">226</span>                p3fRFBot[3] = new Point3f(-0.2f, 0.0f, 0.2f);<a name="line.226"></a>
+<span class="sourceLineNo">227</span>                //left foot front 26<a name="line.227"></a>
+<span class="sourceLineNo">228</span>                Point3f[] p3fLFF = new Point3f[4];<a name="line.228"></a>
+<span class="sourceLineNo">229</span>                p3fLFF[3] = new Point3f(0.2f, 0.1f, 0.2f);<a name="line.229"></a>
+<span class="sourceLineNo">230</span>                p3fLFF[2] = new Point3f(0.2f, 0.0f, 0.2f);<a name="line.230"></a>
+<span class="sourceLineNo">231</span>                p3fLFF[1] = new Point3f(0.1f, 0.0f, 0.2f);<a name="line.231"></a>
+<span class="sourceLineNo">232</span>                p3fLFF[0] = new Point3f(0.1f, 0.1f, 0.2f);<a name="line.232"></a>
+<span class="sourceLineNo">233</span>                //left foot back 27<a name="line.233"></a>
+<span class="sourceLineNo">234</span>                Point3f[] p3fLFB = new Point3f[4];<a name="line.234"></a>
+<span class="sourceLineNo">235</span>                p3fLFB[3] = new Point3f(0.1f, 0.1f, -0.05f);<a name="line.235"></a>
+<span class="sourceLineNo">236</span>                p3fLFB[2] = new Point3f(0.1f, 0.0f, -0.05f);<a name="line.236"></a>
+<span class="sourceLineNo">237</span>                p3fLFB[1] = new Point3f(0.2f, 0.0f, -0.05f);<a name="line.237"></a>
+<span class="sourceLineNo">238</span>                p3fLFB[0] = new Point3f(0.2f, 0.1f, -0.05f);<a name="line.238"></a>
+<span class="sourceLineNo">239</span>                //left foot right side 28<a name="line.239"></a>
+<span class="sourceLineNo">240</span>                Point3f[] p3fLFRS = new Point3f[4];<a name="line.240"></a>
+<span class="sourceLineNo">241</span>                p3fLFRS[3] = new Point3f(0.1f, 0.1f, 0.2f);<a name="line.241"></a>
+<span class="sourceLineNo">242</span>                p3fLFRS[2] = new Point3f(0.1f, 0.0f, 0.2f);<a name="line.242"></a>
+<span class="sourceLineNo">243</span>                p3fLFRS[1] = new Point3f(0.1f, 0.0f, -0.05f);<a name="line.243"></a>
+<span class="sourceLineNo">244</span>                p3fLFRS[0] = new Point3f(0.1f, 0.1f, -0.05f);<a name="line.244"></a>
+<span class="sourceLineNo">245</span>                //left foot left side 29<a name="line.245"></a>
+<span class="sourceLineNo">246</span>                Point3f[] p3fLFLS = new Point3f[4];<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                p3fLFLS[3] = new Point3f(0.2f, 0.1f, -0.05f);<a name="line.247"></a>
+<span class="sourceLineNo">248</span>                p3fLFLS[2] = new Point3f(0.2f, 0.0f, -0.05f);<a name="line.248"></a>
+<span class="sourceLineNo">249</span>                p3fLFLS[1] = new Point3f(0.2f, 0.0f, 0.2f);<a name="line.249"></a>
+<span class="sourceLineNo">250</span>                p3fLFLS[0] = new Point3f(0.2f, 0.1f, 0.2f);<a name="line.250"></a>
+<span class="sourceLineNo">251</span>                //left foot top 30<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                Point3f[] p3fLFT = new Point3f[4];<a name="line.252"></a>
+<span class="sourceLineNo">253</span>                p3fLFT[3] = new Point3f(0.1f, 0.1f, -0.05f);<a name="line.253"></a>
+<span class="sourceLineNo">254</span>                p3fLFT[2] = new Point3f(0.2f, 0.1f, -0.05f);<a name="line.254"></a>
+<span class="sourceLineNo">255</span>                p3fLFT[1] = new Point3f(0.2f, 0.1f, 0.2f);<a name="line.255"></a>
+<span class="sourceLineNo">256</span>                p3fLFT[0] = new Point3f(0.1f, 0.1f, 0.2f);<a name="line.256"></a>
+<span class="sourceLineNo">257</span>                //left foot bottom 31<a name="line.257"></a>
+<span class="sourceLineNo">258</span>                Point3f[] p3fLFBot = new Point3f[4];<a name="line.258"></a>
+<span class="sourceLineNo">259</span>                p3fLFBot[3] = new Point3f(0.2f, 0.0f, -0.05f);<a name="line.259"></a>
+<span class="sourceLineNo">260</span>                p3fLFBot[2] = new Point3f(0.1f, 0.0f, -0.05f);<a name="line.260"></a>
+<span class="sourceLineNo">261</span>                p3fLFBot[1] = new Point3f(0.1f, 0.0f, 0.2f);<a name="line.261"></a>
+<span class="sourceLineNo">262</span>                p3fLFBot[0] = new Point3f(0.2f, 0.0f, 0.2f);<a name="line.262"></a>
+<span class="sourceLineNo">263</span>                //array location 32 is not being used<a name="line.263"></a>
+<span class="sourceLineNo">264</span>                //Tail Right side  33<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                Point3f[] p3fTRS = new Point3f[4];<a name="line.265"></a>
+<span class="sourceLineNo">266</span>                p3fTRS[0] = new Point3f(-0.1f, 0.65f, -0.45f);<a name="line.266"></a>
+<span class="sourceLineNo">267</span>                p3fTRS[1] = new Point3f(-0.1f, 0.6f, -0.5f);<a name="line.267"></a>
+<span class="sourceLineNo">268</span>                p3fTRS[2] = new Point3f(-0.1f, 0.2f, -0.1f);<a name="line.268"></a>
+<span class="sourceLineNo">269</span>                p3fTRS[3] = new Point3f(-0.1f, 0.25f, -0.05f);<a name="line.269"></a>
+<span class="sourceLineNo">270</span>                //Tail back 34<a name="line.270"></a>
+<span class="sourceLineNo">271</span>                Point3f[] p3fTailBack = new Point3f[4];<a name="line.271"></a>
+<span class="sourceLineNo">272</span>                p3fTailBack[0] = new Point3f(-0.1f, 0.6f, -0.5f);<a name="line.272"></a>
+<span class="sourceLineNo">273</span>                p3fTailBack[1] = new Point3f(0.1f, 0.6f, -0.5f);<a name="line.273"></a>
+<span class="sourceLineNo">274</span>                p3fTailBack[2] = new Point3f(0.1f, 0.2f, -0.1f);<a name="line.274"></a>
+<span class="sourceLineNo">275</span>                p3fTailBack[3] = new Point3f(-0.1f, 0.2f, -0.1f);<a name="line.275"></a>
+<span class="sourceLineNo">276</span>                //Tail Left side 35<a name="line.276"></a>
+<span class="sourceLineNo">277</span>                Point3f[] p3fTLS = new Point3f[4];<a name="line.277"></a>
+<span class="sourceLineNo">278</span>                p3fTLS[0] = new Point3f(0.1f, 0.65f, -0.45f);<a name="line.278"></a>
+<span class="sourceLineNo">279</span>                p3fTLS[1] = new Point3f(0.1f, 0.25f, -0.05f);<a name="line.279"></a>
+<span class="sourceLineNo">280</span>                p3fTLS[2] = new Point3f(0.1f, 0.2f, -0.1f);<a name="line.280"></a>
+<span class="sourceLineNo">281</span>                p3fTLS[3] = new Point3f(0.1f, 0.6f, -0.5f);<a name="line.281"></a>
+<span class="sourceLineNo">282</span>                //Tail Back(Upper Portion) 36<a name="line.282"></a>
+<span class="sourceLineNo">283</span>                Point3f[] p3fTailBackUp = new Point3f[4];<a name="line.283"></a>
+<span class="sourceLineNo">284</span>                p3fTailBackUp[0] = new Point3f(0.1f, 0.65f, -0.45f);<a name="line.284"></a>
+<span class="sourceLineNo">285</span>                p3fTailBackUp[1] = new Point3f(-0.1f, 0.65f, -0.45f);<a name="line.285"></a>
+<span class="sourceLineNo">286</span>                p3fTailBackUp[2] = new Point3f(-0.1f, 0.25f, -0.05f);<a name="line.286"></a>
+<span class="sourceLineNo">287</span>                p3fTailBackUp[3] = new Point3f(0.1f, 0.25f, -0.05f);<a name="line.287"></a>
+<span class="sourceLineNo">288</span>                //Tail Tip 37<a name="line.288"></a>
+<span class="sourceLineNo">289</span>                Point3f[] p3fTailTip = new Point3f[4];<a name="line.289"></a>
+<span class="sourceLineNo">290</span>                p3fTailTip[0] = new Point3f(-0.1f, 0.65f, -0.45f);<a name="line.290"></a>
+<span class="sourceLineNo">291</span>                p3fTailTip[1] = new Point3f(0.1f, 0.65f, -0.45f);<a name="line.291"></a>
+<span class="sourceLineNo">292</span>                p3fTailTip[2] = new Point3f(0.1f, 0.6f, -0.5f);<a name="line.292"></a>
+<span class="sourceLineNo">293</span>                p3fTailTip[3] = new Point3f(-0.1f, 0.6f, -0.5f);<a name="line.293"></a>
+<span class="sourceLineNo">294</span>                //right tooth front 38<a name="line.294"></a>
+<span class="sourceLineNo">295</span>                Point3f[] p3fRTF = new Point3f[4];<a name="line.295"></a>
+<span class="sourceLineNo">296</span>                p3fRTF[0] = new Point3f(-0.075f, 0.85f, 0.225f);<a name="line.296"></a>
+<span class="sourceLineNo">297</span>                p3fRTF[1] = new Point3f(-0.075f, 0.75f, 0.225f);<a name="line.297"></a>
+<span class="sourceLineNo">298</span>                p3fRTF[2] = new Point3f(-0.025f, 0.75f, 0.225f);<a name="line.298"></a>
+<span class="sourceLineNo">299</span>                p3fRTF[3] = new Point3f(-0.025f, 0.85f, 0.225f);<a name="line.299"></a>
+<span class="sourceLineNo">300</span>                //right tooth back 39<a name="line.300"></a>
+<span class="sourceLineNo">301</span>                Point3f[] p3fRTB = new Point3f[4];<a name="line.301"></a>
+<span class="sourceLineNo">302</span>                p3fRTB[0] = new Point3f(-0.025f, 0.85f, 0.2f);<a name="line.302"></a>
+<span class="sourceLineNo">303</span>                p3fRTB[1] = new Point3f(-0.025f, 0.75f, 0.2f);<a name="line.303"></a>
+<span class="sourceLineNo">304</span>                p3fRTB[2] = new Point3f(-0.075f, 0.75f, 0.2f);<a name="line.304"></a>
+<span class="sourceLineNo">305</span>                p3fRTB[3] = new Point3f(-0.075f, 0.85f, 0.2f);<a name="line.305"></a>
+<span class="sourceLineNo">306</span>                //right tooth right side 40<a name="line.306"></a>
+<span class="sourceLineNo">307</span>                Point3f[] p3fRTRS = new Point3f[4];<a name="line.307"></a>
+<span class="sourceLineNo">308</span>                p3fRTRS[0] = new Point3f(-0.075f, 0.85f, 0.2f);<a name="line.308"></a>
+<span class="sourceLineNo">309</span>                p3fRTRS[1] = new Point3f(-0.075f, 0.75f, 0.2f);<a name="line.309"></a>
+<span class="sourceLineNo">310</span>                p3fRTRS[2] = new Point3f(-0.075f, 0.75f, 0.225f);<a name="line.310"></a>
+<span class="sourceLineNo">311</span>                p3fRTRS[3] = new Point3f(-0.075f, 0.85f, 0.225f);<a name="line.311"></a>
+<span class="sourceLineNo">312</span>                //right tooth left side 41<a name="line.312"></a>
+<span class="sourceLineNo">313</span>                Point3f[] p3fRTLS = new Point3f[4];<a name="line.313"></a>
+<span class="sourceLineNo">314</span>                p3fRTLS[0] = new Point3f(-0.025f, 0.85f, 0.225f);<a name="line.314"></a>
+<span class="sourceLineNo">315</span>                p3fRTLS[1] = new Point3f(-0.025f, 0.75f, 0.225f);<a name="line.315"></a>
+<span class="sourceLineNo">316</span>                p3fRTLS[2] = new Point3f(-0.025f, 0.75f, 0.2f);<a name="line.316"></a>
+<span class="sourceLineNo">317</span>                p3fRTLS[3] = new Point3f(-0.025f, 0.85f, 0.2f);<a name="line.317"></a>
+<span class="sourceLineNo">318</span>                //right tooth top 42<a name="line.318"></a>
+<span class="sourceLineNo">319</span>                Point3f[] p3fRTT = new Point3f[4];<a name="line.319"></a>
+<span class="sourceLineNo">320</span>                p3fRTT[0] = new Point3f(-0.075f, 0.85f, 0.2f);<a name="line.320"></a>
+<span class="sourceLineNo">321</span>                p3fRTT[1] = new Point3f(-0.075f, 0.85f, 0.225f);<a name="line.321"></a>
+<span class="sourceLineNo">322</span>                p3fRTT[2] = new Point3f(-0.025f, 0.85f, 0.225f);<a name="line.322"></a>
+<span class="sourceLineNo">323</span>                p3fRTT[3] = new Point3f(-0.025f, 0.85f, 0.2f);<a name="line.323"></a>
+<span class="sourceLineNo">324</span>                //right tooth bottom 43<a name="line.324"></a>
+<span class="sourceLineNo">325</span>                Point3f[] p3fRTBot = new Point3f[4];<a name="line.325"></a>
+<span class="sourceLineNo">326</span>                p3fRTBot[3] = new Point3f(-0.075f, 0.75f, 0.2f);<a name="line.326"></a>
+<span class="sourceLineNo">327</span>                p3fRTBot[2] = new Point3f(-0.075f, 0.75f, 0.225f);<a name="line.327"></a>
+<span class="sourceLineNo">328</span>                p3fRTBot[1] = new Point3f(-0.025f, 0.75f, 0.225f);<a name="line.328"></a>
+<span class="sourceLineNo">329</span>                p3fRTBot[0] = new Point3f(-0.025f, 0.75f, 0.2f);<a name="line.329"></a>
+<span class="sourceLineNo">330</span>                //left tooth front 44<a name="line.330"></a>
+<span class="sourceLineNo">331</span>                Point3f[] p3fLTF = new Point3f[4];<a name="line.331"></a>
+<span class="sourceLineNo">332</span>                p3fLTF[0] = new Point3f(0.025f, 0.85f, 0.225f);<a name="line.332"></a>
+<span class="sourceLineNo">333</span>                p3fLTF[1] = new Point3f(0.025f, 0.75f, 0.225f);<a name="line.333"></a>
+<span class="sourceLineNo">334</span>                p3fLTF[2] = new Point3f(0.075f, 0.75f, 0.225f);<a name="line.334"></a>
+<span class="sourceLineNo">335</span>                p3fLTF[3] = new Point3f(0.075f, 0.85f, 0.225f);<a name="line.335"></a>
+<span class="sourceLineNo">336</span>                //left tooth back 45<a name="line.336"></a>
+<span class="sourceLineNo">337</span>                Point3f[] p3fLTB = new Point3f[4];<a name="line.337"></a>
+<span class="sourceLineNo">338</span>                p3fLTB[0] = new Point3f(0.075f, 0.85f, 0.2f);<a name="line.338"></a>
+<span class="sourceLineNo">339</span>                p3fLTB[1] = new Point3f(0.075f, 0.75f, 0.2f);<a name="line.339"></a>
+<span class="sourceLineNo">340</span>                p3fLTB[2] = new Point3f(0.025f, 0.75f, 0.2f);<a name="line.340"></a>
+<span class="sourceLineNo">341</span>                p3fLTB[3] = new Point3f(0.025f, 0.85f, 0.2f);<a name="line.341"></a>
+<span class="sourceLineNo">342</span>                //left tooth right side 46<a name="line.342"></a>
+<span class="sourceLineNo">343</span>                Point3f[] p3fLTRS = new Point3f[4];<a name="line.343"></a>
+<span class="sourceLineNo">344</span>                p3fLTRS[0] = new Point3f(0.075f, 0.85f, 0.2f);<a name="line.344"></a>
+<span class="sourceLineNo">345</span>                p3fLTRS[1] = new Point3f(0.075f, 0.75f, 0.2f);<a name="line.345"></a>
+<span class="sourceLineNo">346</span>                p3fLTRS[2] = new Point3f(0.075f, 0.75f, 0.225f);<a name="line.346"></a>
+<span class="sourceLineNo">347</span>                p3fLTRS[3] = new Point3f(0.075f, 0.85f, 0.225f);<a name="line.347"></a>
+<span class="sourceLineNo">348</span>                //left tooth left side 47<a name="line.348"></a>
+<span class="sourceLineNo">349</span>                Point3f[] p3fLTLS = new Point3f[4];<a name="line.349"></a>
+<span class="sourceLineNo">350</span>                p3fLTLS[0] = new Point3f(0.025f, 0.85f, 0.225f);<a name="line.350"></a>
+<span class="sourceLineNo">351</span>                p3fLTLS[1] = new Point3f(0.025f, 0.75f, 0.225f);<a name="line.351"></a>
+<span class="sourceLineNo">352</span>                p3fLTLS[2] = new Point3f(0.025f, 0.75f, 0.2f);<a name="line.352"></a>
+<span class="sourceLineNo">353</span>                p3fLTLS[3] = new Point3f(0.025f, 0.85f, 0.2f);<a name="line.353"></a>
+<span class="sourceLineNo">354</span>                //left tooth top 48<a name="line.354"></a>
+<span class="sourceLineNo">355</span>                Point3f[] p3fLTT = new Point3f[4];<a name="line.355"></a>
+<span class="sourceLineNo">356</span>                p3fLTT[3] = new Point3f(0.075f, 0.85f, 0.2f);<a name="line.356"></a>
+<span class="sourceLineNo">357</span>                p3fLTT[2] = new Point3f(0.075f, 0.85f, 0.225f);<a name="line.357"></a>
+<span class="sourceLineNo">358</span>                p3fLTT[1] = new Point3f(0.025f, 0.85f, 0.225f);<a name="line.358"></a>
+<span class="sourceLineNo">359</span>                p3fLTT[0] = new Point3f(0.025f, 0.85f, 0.2f);<a name="line.359"></a>
+<span class="sourceLineNo">360</span>                //left tooth bottom 49<a name="line.360"></a>
+<span class="sourceLineNo">361</span>                Point3f[] p3fLTBot = new Point3f[4];<a name="line.361"></a>
+<span class="sourceLineNo">362</span>                p3fLTBot[0] = new Point3f(0.075f, 0.75f, 0.2f);<a name="line.362"></a>
+<span class="sourceLineNo">363</span>                p3fLTBot[1] = new Point3f(0.075f, 0.75f, 0.225f);<a name="line.363"></a>
+<span class="sourceLineNo">364</span>                p3fLTBot[2] = new Point3f(0.025f, 0.75f, 0.225f);<a name="line.364"></a>
+<span class="sourceLineNo">365</span>                p3fLTBot[3] = new Point3f(0.025f, 0.75f, 0.2f);<a name="line.365"></a>
+<span class="sourceLineNo">366</span><a name="line.366"></a>
+<span class="sourceLineNo">367</span>                qa[0].setCoordinates(0, p3fFB);<a name="line.367"></a>
+<span class="sourceLineNo">368</span>                qa[1].setCoordinates(0, p3fBB);<a name="line.368"></a>
+<span class="sourceLineNo">369</span>                qa[2].setCoordinates(0, p3fBRS);<a name="line.369"></a>
+<span class="sourceLineNo">370</span>                qa[3].setCoordinates(0, p3fBLS);<a name="line.370"></a>
+<span class="sourceLineNo">371</span>                qa[4].setCoordinates(0, p3fBT);<a name="line.371"></a>
+<span class="sourceLineNo">372</span>                qa[5].setCoordinates(0, p3fBBot);<a name="line.372"></a>
+<span class="sourceLineNo">373</span>                qa[6].setCoordinates(0, p3fHF);<a name="line.373"></a>
+<span class="sourceLineNo">374</span>                qa[7].setCoordinates(0, p3fHB);<a name="line.374"></a>
+<span class="sourceLineNo">375</span>                qa[8].setCoordinates(0, p3fHRS);<a name="line.375"></a>
+<span class="sourceLineNo">376</span>                qa[9].setCoordinates(0, p3fHLS);<a name="line.376"></a>
+<span class="sourceLineNo">377</span>                qa[10].setCoordinates(0, p3fHT);<a name="line.377"></a>
+<span class="sourceLineNo">378</span>                qa[11].setCoordinates(0, p3fHBot);<a name="line.378"></a>
+<span class="sourceLineNo">379</span>                qar[6].setCoordinates(0, p3fLFR);<a name="line.379"></a>
+<span class="sourceLineNo">380</span>                qar[7].setCoordinates(0, p3fLBR);<a name="line.380"></a>
+<span class="sourceLineNo">381</span>                qar[8].setCoordinates(0, p3fRLRS);<a name="line.381"></a>
+<span class="sourceLineNo">382</span>                qar[9].setCoordinates(0, p3fRLLS);<a name="line.382"></a>
+<span class="sourceLineNo">383</span>                qal[6].setCoordinates(0, p3fLLF);<a name="line.383"></a>
+<span class="sourceLineNo">384</span>                qal[7].setCoordinates(0, p3fLLB);<a name="line.384"></a>
+<span class="sourceLineNo">385</span>                qal[8].setCoordinates(0, p3fLLRS);<a name="line.385"></a>
+<span class="sourceLineNo">386</span>                qal[9].setCoordinates(0, p3fLLLS);<a name="line.386"></a>
+<span class="sourceLineNo">387</span>                qar[0].setCoordinates(0, p3fRFF);<a name="line.387"></a>
+<span class="sourceLineNo">388</span>                qar[1].setCoordinates(0, p3fRFB);<a name="line.388"></a>
+<span class="sourceLineNo">389</span>                qar[2].setCoordinates(0, p3fRFRS);<a name="line.389"></a>
+<span class="sourceLineNo">390</span>                qar[3].setCoordinates(0, p3fRFLS);<a name="line.390"></a>
+<span class="sourceLineNo">391</span>                qar[4].setCoordinates(0, p3fRFT);<a name="line.391"></a>
+<span class="sourceLineNo">392</span>                qar[5].setCoordinates(0, p3fRFBot);<a name="line.392"></a>
+<span class="sourceLineNo">393</span>                qal[0].setCoordinates(0, p3fLFF);<a name="line.393"></a>
+<span class="sourceLineNo">394</span>                qal[1].setCoordinates(0, p3fLFB);<a name="line.394"></a>
+<span class="sourceLineNo">395</span>                qal[2].setCoordinates(0, p3fLFRS);<a name="line.395"></a>
+<span class="sourceLineNo">396</span>                qal[3].setCoordinates(0, p3fLFLS);<a name="line.396"></a>
+<span class="sourceLineNo">397</span>                qal[4].setCoordinates(0, p3fLFT);<a name="line.397"></a>
+<span class="sourceLineNo">398</span>                qal[5].setCoordinates(0, p3fLFBot);<a name="line.398"></a>
+<span class="sourceLineNo">399</span>                qa[12].setCoordinates(0, p3fTRS);<a name="line.399"></a>
+<span class="sourceLineNo">400</span>                qa[13].setCoordinates(0, p3fTailBack);<a name="line.400"></a>
+<span class="sourceLineNo">401</span>                qa[14].setCoordinates(0, p3fTLS);<a name="line.401"></a>
+<span class="sourceLineNo">402</span>                qa[15].setCoordinates(0, p3fTailBackUp);<a name="line.402"></a>
+<span class="sourceLineNo">403</span>                qa[16].setCoordinates(0, p3fTailTip);<a name="line.403"></a>
+<span class="sourceLineNo">404</span>                qa[17].setCoordinates(0, p3fRTF);<a name="line.404"></a>
+<span class="sourceLineNo">405</span>                qa[18].setCoordinates(0, p3fRTB);<a name="line.405"></a>
+<span class="sourceLineNo">406</span>                qa[19].setCoordinates(0, p3fRTRS);<a name="line.406"></a>
+<span class="sourceLineNo">407</span>                qa[20].setCoordinates(0, p3fRTLS);<a name="line.407"></a>
+<span class="sourceLineNo">408</span>                qa[21].setCoordinates(0, p3fRTT);<a name="line.408"></a>
+<span class="sourceLineNo">409</span>                qa[22].setCoordinates(0, p3fRTBot);<a name="line.409"></a>
+<span class="sourceLineNo">410</span>                qa[23].setCoordinates(0, p3fLTF);<a name="line.410"></a>
+<span class="sourceLineNo">411</span>                qa[24].setCoordinates(0, p3fLTB);<a name="line.411"></a>
+<span class="sourceLineNo">412</span>                qa[25].setCoordinates(0, p3fLTRS);<a name="line.412"></a>
+<span class="sourceLineNo">413</span>                qa[26].setCoordinates(0, p3fLTLS);<a name="line.413"></a>
+<span class="sourceLineNo">414</span>                qa[27].setCoordinates(0, p3fLTT);<a name="line.414"></a>
+<span class="sourceLineNo">415</span>                qa[28].setCoordinates(0, p3fLTBot);<a name="line.415"></a>
+<span class="sourceLineNo">416</span><a name="line.416"></a>
+<span class="sourceLineNo">417</span>                Vector3f[] npx = new Vector3f[4];<a name="line.417"></a>
+<span class="sourceLineNo">418</span>                for (int i = 0; i &lt; 4; i++) {<a name="line.418"></a>
+<span class="sourceLineNo">419</span><a name="line.419"></a>
+<span class="sourceLineNo">420</span>                        npx[i] = new Vector3f(1.0f, 0.0f, 0.0f);<a name="line.420"></a>
+<span class="sourceLineNo">421</span>                }<a name="line.421"></a>
+<span class="sourceLineNo">422</span>                Vector3f[] nmx = new Vector3f[4];<a name="line.422"></a>
+<span class="sourceLineNo">423</span>                for (int i = 0; i &lt; 4; i++) {<a name="line.423"></a>
+<span class="sourceLineNo">424</span>                        nmx[i] = new Vector3f(-1.0f, 0.0f, 0.0f);<a name="line.424"></a>
+<span class="sourceLineNo">425</span>                }<a name="line.425"></a>
+<span class="sourceLineNo">426</span>                Vector3f[] npy = new Vector3f[4];<a name="line.426"></a>
+<span class="sourceLineNo">427</span>                for (int i = 0; i &lt; 4; i++) {<a name="line.427"></a>
+<span class="sourceLineNo">428</span><a name="line.428"></a>
+<span class="sourceLineNo">429</span>                        npy[i] = new Vector3f(0.0f, 1.0f, 0.0f);<a name="line.429"></a>
+<span class="sourceLineNo">430</span>                }<a name="line.430"></a>
+<span class="sourceLineNo">431</span>                Vector3f[] nmy = new Vector3f[4];<a name="line.431"></a>
+<span class="sourceLineNo">432</span>                for (int i = 0; i &lt; 4; i++) {<a name="line.432"></a>
+<span class="sourceLineNo">433</span><a name="line.433"></a>
+<span class="sourceLineNo">434</span>                        nmy[i] = new Vector3f(0.0f, -1.0f, 0.0f);<a name="line.434"></a>
+<span class="sourceLineNo">435</span>                }<a name="line.435"></a>
+<span class="sourceLineNo">436</span>                Vector3f[] npz = new Vector3f[4];<a name="line.436"></a>
+<span class="sourceLineNo">437</span>                for (int i = 0; i &lt; 4; i++) {<a name="line.437"></a>
+<span class="sourceLineNo">438</span>                        npz[i] = new Vector3f(0.0f, 0.0f, 1.0f);<a name="line.438"></a>
+<span class="sourceLineNo">439</span>                }<a name="line.439"></a>
+<span class="sourceLineNo">440</span>                Vector3f[] nmz = new Vector3f[4];<a name="line.440"></a>
+<span class="sourceLineNo">441</span>                for (int i = 0; i &lt; 4; i++) {<a name="line.441"></a>
+<span class="sourceLineNo">442</span>                        nmz[i] = new Vector3f(0.0f, 0.0f, -1.0f);<a name="line.442"></a>
+<span class="sourceLineNo">443</span>                }<a name="line.443"></a>
+<span class="sourceLineNo">444</span>                Vector3f[] nbd = new Vector3f[4];               // normals, backward-down<a name="line.444"></a>
+<span class="sourceLineNo">445</span>                for (int i = 0; i &lt; 4; i++) {<a name="line.445"></a>
+<span class="sourceLineNo">446</span>                        nbd[i] = new Vector3f(0.0f, -0.707f, -0.707f);<a name="line.446"></a>
+<span class="sourceLineNo">447</span>                }<a name="line.447"></a>
+<span class="sourceLineNo">448</span>                Vector3f[] nfu = new Vector3f[4];               // normals, forward-upward<a name="line.448"></a>
+<span class="sourceLineNo">449</span>                for (int i = 0; i &lt; 4; i++) {<a name="line.449"></a>
+<span class="sourceLineNo">450</span>                        nfu[i] = new Vector3f(0.0f, 0.707f, 0.707f);<a name="line.450"></a>
+<span class="sourceLineNo">451</span>                }<a name="line.451"></a>
+<span class="sourceLineNo">452</span>                Vector3f[] nbu = new Vector3f[4];               // normals, backward-upward<a name="line.452"></a>
+<span class="sourceLineNo">453</span>                for (int i = 0; i &lt; 4; i++) {<a name="line.453"></a>
+<span class="sourceLineNo">454</span>                        nbu[i] = new Vector3f(0.0f, 0.707f, -0.707f);<a name="line.454"></a>
+<span class="sourceLineNo">455</span>                }<a name="line.455"></a>
+<span class="sourceLineNo">456</span><a name="line.456"></a>
+<span class="sourceLineNo">457</span>                Material m = new Material(<a name="line.457"></a>
+<span class="sourceLineNo">458</span>                        new Color3f(1.0f, 1.0f, 1.0f),<a name="line.458"></a>
+<span class="sourceLineNo">459</span>                        new Color3f(0.0f, 0.0f, 0.0f),<a name="line.459"></a>
+<span class="sourceLineNo">460</span>                        new Color3f(1.0f, 1.0f, 1.0f),<a name="line.460"></a>
+<span class="sourceLineNo">461</span>                        new Color3f(1.0f, 1.0f, 1.0f),<a name="line.461"></a>
+<span class="sourceLineNo">462</span>                        80.0f<a name="line.462"></a>
+<span class="sourceLineNo">463</span>                );<a name="line.463"></a>
+<span class="sourceLineNo">464</span><a name="line.464"></a>
+<span class="sourceLineNo">465</span>                TexCoord2f[] t0 = new TexCoord2f[4];<a name="line.465"></a>
+<span class="sourceLineNo">466</span>                t0[0] = new TexCoord2f(0.0625f, 0.25f);<a name="line.466"></a>
+<span class="sourceLineNo">467</span>                t0[1] = new TexCoord2f(0.0625f, 0.0625f);<a name="line.467"></a>
+<span class="sourceLineNo">468</span>                t0[2] = new TexCoord2f(0.25f, 0.0625f);<a name="line.468"></a>
+<span class="sourceLineNo">469</span>                t0[3] = new TexCoord2f(0.25f, 0.25f);<a name="line.469"></a>
+<span class="sourceLineNo">470</span>                TexCoord2f[] t1 = new TexCoord2f[4];<a name="line.470"></a>
+<span class="sourceLineNo">471</span>                t1[0] = new TexCoord2f(0.3125f, 0.25f);<a name="line.471"></a>
+<span class="sourceLineNo">472</span>                t1[1] = new TexCoord2f(0.3125f, 0.0625f);<a name="line.472"></a>
+<span class="sourceLineNo">473</span>                t1[2] = new TexCoord2f(0.5f, 0.0625f);<a name="line.473"></a>
+<span class="sourceLineNo">474</span>                t1[3] = new TexCoord2f(0.5f, 0.25f);<a name="line.474"></a>
+<span class="sourceLineNo">475</span>                TexCoord2f[] t2 = new TexCoord2f[4];<a name="line.475"></a>
+<span class="sourceLineNo">476</span>                t2[0] = new TexCoord2f(0.0f, 0.25f);<a name="line.476"></a>
+<span class="sourceLineNo">477</span>                t2[1] = new TexCoord2f(0.0f, 0.0625f);<a name="line.477"></a>
+<span class="sourceLineNo">478</span>                t2[2] = new TexCoord2f(0.0625f, 0.0625f);<a name="line.478"></a>
+<span class="sourceLineNo">479</span>                t2[3] = new TexCoord2f(0.0625f, 0.25f);<a name="line.479"></a>
+<span class="sourceLineNo">480</span>                TexCoord2f[] t3 = new TexCoord2f[4];<a name="line.480"></a>
+<span class="sourceLineNo">481</span>                t3[0] = new TexCoord2f(0.25f, 0.25f);<a name="line.481"></a>
+<span class="sourceLineNo">482</span>                t3[1] = new TexCoord2f(0.25f, 0.0625f);<a name="line.482"></a>
+<span class="sourceLineNo">483</span>                t3[2] = new TexCoord2f(0.3125f, 0.0625f);<a name="line.483"></a>
+<span class="sourceLineNo">484</span>                t3[3] = new TexCoord2f(0.3125f, 0.25f);<a name="line.484"></a>
+<span class="sourceLineNo">485</span>                TexCoord2f[] t4 = new TexCoord2f[4];<a name="line.485"></a>
+<span class="sourceLineNo">486</span>                t4[0] = new TexCoord2f(0.0625f, 0.3125f);<a name="line.486"></a>
+<span class="sourceLineNo">487</span>                t4[1] = new TexCoord2f(0.0625f, 0.25f);<a name="line.487"></a>
+<span class="sourceLineNo">488</span>                t4[2] = new TexCoord2f(0.25f, 0.25f);<a name="line.488"></a>
+<span class="sourceLineNo">489</span>                t4[3] = new TexCoord2f(0.25f, 0.3125f);<a name="line.489"></a>
+<span class="sourceLineNo">490</span>                TexCoord2f[] t5 = new TexCoord2f[4];<a name="line.490"></a>
+<span class="sourceLineNo">491</span>                t5[0] = new TexCoord2f(0.25f, 0.0f);<a name="line.491"></a>
+<span class="sourceLineNo">492</span>                t5[1] = new TexCoord2f(0.25f, 0.0625f);<a name="line.492"></a>
+<span class="sourceLineNo">493</span>                t5[2] = new TexCoord2f(0.0625f, 0.0625f);<a name="line.493"></a>
+<span class="sourceLineNo">494</span>                t5[3] = new TexCoord2f(0.0625f, 0.0f);<a name="line.494"></a>
+<span class="sourceLineNo">495</span>                TexCoord2f[] t6 = new TexCoord2f[4];<a name="line.495"></a>
+<span class="sourceLineNo">496</span>                t6[0] = new TexCoord2f(0.6875f, 0.1875f);<a name="line.496"></a>
+<span class="sourceLineNo">497</span>                t6[1] = new TexCoord2f(0.6875f, 0.125f);<a name="line.497"></a>
+<span class="sourceLineNo">498</span>                t6[2] = new TexCoord2f(0.75f, 0.125f);<a name="line.498"></a>
+<span class="sourceLineNo">499</span>                t6[3] = new TexCoord2f(0.75f, 0.1875f);<a name="line.499"></a>
+<span class="sourceLineNo">500</span>                TexCoord2f[] t7 = new TexCoord2f[4];<a name="line.500"></a>
+<span class="sourceLineNo">501</span>                t7[0] = new TexCoord2f(0.875f, 0.1875f);<a name="line.501"></a>
+<span class="sourceLineNo">502</span>                t7[1] = new TexCoord2f(0.875f, 0.125f);<a name="line.502"></a>
+<span class="sourceLineNo">503</span>                t7[2] = new TexCoord2f(0.9375f, 0.125f);<a name="line.503"></a>
+<span class="sourceLineNo">504</span>                t7[3] = new TexCoord2f(0.9375f, 0.1875f);<a name="line.504"></a>
+<span class="sourceLineNo">505</span>                TexCoord2f[] t8 = new TexCoord2f[4];<a name="line.505"></a>
+<span class="sourceLineNo">506</span>                t8[0] = new TexCoord2f(0.5625f, 0.1875f);<a name="line.506"></a>
+<span class="sourceLineNo">507</span>                t8[1] = new TexCoord2f(0.5625f, 0.125f);<a name="line.507"></a>
+<span class="sourceLineNo">508</span>                t8[2] = new TexCoord2f(0.6875f, 0.125f);<a name="line.508"></a>
+<span class="sourceLineNo">509</span>                t8[3] = new TexCoord2f(0.6875f, 0.1875f);<a name="line.509"></a>
+<span class="sourceLineNo">510</span>                TexCoord2f[] t9 = new TexCoord2f[4];<a name="line.510"></a>
+<span class="sourceLineNo">511</span>                t9[0] = new TexCoord2f(0.75f, 0.1875f);<a name="line.511"></a>
+<span class="sourceLineNo">512</span>                t9[1] = new TexCoord2f(0.75f, 0.125f);<a name="line.512"></a>
+<span class="sourceLineNo">513</span>                t9[2] = new TexCoord2f(0.875f, 0.125f);<a name="line.513"></a>
+<span class="sourceLineNo">514</span>                t9[3] = new TexCoord2f(0.875f, 0.1875f);<a name="line.514"></a>
+<span class="sourceLineNo">515</span>                TexCoord2f[] t10 = new TexCoord2f[4];<a name="line.515"></a>
+<span class="sourceLineNo">516</span>                t10[0] = new TexCoord2f(0.6875f, 0.3125f);<a name="line.516"></a>
+<span class="sourceLineNo">517</span>                t10[1] = new TexCoord2f(0.6875f, 0.1875f);<a name="line.517"></a>
+<span class="sourceLineNo">518</span>                t10[2] = new TexCoord2f(0.75f, 0.1875f);<a name="line.518"></a>
+<span class="sourceLineNo">519</span>                t10[3] = new TexCoord2f(0.75f, 0.3125f);<a name="line.519"></a>
+<span class="sourceLineNo">520</span>                TexCoord2f[] t11 = new TexCoord2f[4];<a name="line.520"></a>
+<span class="sourceLineNo">521</span>                t11[0] = new TexCoord2f(0.75f, 0.0f);<a name="line.521"></a>
+<span class="sourceLineNo">522</span>                t11[1] = new TexCoord2f(0.75f, 0.125f);<a name="line.522"></a>
+<span class="sourceLineNo">523</span>                t11[2] = new TexCoord2f(0.6875f, 0.125f);<a name="line.523"></a>
+<span class="sourceLineNo">524</span>                t11[3] = new TexCoord2f(0.6875f, 0.0f);<a name="line.524"></a>
+<span class="sourceLineNo">525</span>                TexCoord2f[] t12 = new TexCoord2f[4];<a name="line.525"></a>
+<span class="sourceLineNo">526</span>                t12[0] = new TexCoord2f(0.453125f, 0.484375f);<a name="line.526"></a>
+<span class="sourceLineNo">527</span>                t12[1] = new TexCoord2f(0.421875f, 0.484375f);<a name="line.527"></a>
+<span class="sourceLineNo">528</span>                t12[2] = new TexCoord2f(0.421875f, 0.453125f);<a name="line.528"></a>
+<span class="sourceLineNo">529</span>                t12[3] = new TexCoord2f(0.453125f, 0.453125f);<a name="line.529"></a>
+<span class="sourceLineNo">530</span>                TexCoord2f[] t13 = new TexCoord2f[4];<a name="line.530"></a>
+<span class="sourceLineNo">531</span>                t13[0] = new TexCoord2f(0.40625f, 0.375f);<a name="line.531"></a>
+<span class="sourceLineNo">532</span>                t13[1] = new TexCoord2f(0.375f, 0.375f);<a name="line.532"></a>
+<span class="sourceLineNo">533</span>                t13[2] = new TexCoord2f(0.375f, 0.34375f);<a name="line.533"></a>
+<span class="sourceLineNo">534</span>                t13[3] = new TexCoord2f(0.40625f, 0.34375f);<a name="line.534"></a>
+<span class="sourceLineNo">535</span>                TexCoord2f[] t14 = new TexCoord2f[4];<a name="line.535"></a>
+<span class="sourceLineNo">536</span>                t14[0] = new TexCoord2f(0.25f, 0.375f);<a name="line.536"></a>
+<span class="sourceLineNo">537</span>                t14[1] = new TexCoord2f(0.28125f, 0.375f);<a name="line.537"></a>
+<span class="sourceLineNo">538</span>                t14[2] = new TexCoord2f(0.28125f, 0.40625f);<a name="line.538"></a>
+<span class="sourceLineNo">539</span>                t14[3] = new TexCoord2f(0.25f, 0.40625f);<a name="line.539"></a>
+<span class="sourceLineNo">540</span>                TexCoord2f[] t15 = new TexCoord2f[4];<a name="line.540"></a>
+<span class="sourceLineNo">541</span>                t15[0] = new TexCoord2f(0.40625f, 0.40625f);<a name="line.541"></a>
+<span class="sourceLineNo">542</span>                t15[1] = new TexCoord2f(0.375f, 0.40625f);<a name="line.542"></a>
+<span class="sourceLineNo">543</span>                t15[2] = new TexCoord2f(0.375f, 0.375f);<a name="line.543"></a>
+<span class="sourceLineNo">544</span>                t15[3] = new TexCoord2f(0.40625f, 0.375f);<a name="line.544"></a>
+<span class="sourceLineNo">545</span>                TexCoord2f[] t16 = new TexCoord2f[4];<a name="line.545"></a>
+<span class="sourceLineNo">546</span>                t16[0] = new TexCoord2f(0.453125f, 0.484375f);<a name="line.546"></a>
+<span class="sourceLineNo">547</span>                t16[1] = new TexCoord2f(0.421875f, 0.484375f);<a name="line.547"></a>
+<span class="sourceLineNo">548</span>                t16[2] = new TexCoord2f(0.421875f, 0.453125f);<a name="line.548"></a>
+<span class="sourceLineNo">549</span>                t16[3] = new TexCoord2f(0.453125f, 0.453125f);<a name="line.549"></a>
+<span class="sourceLineNo">550</span>                TexCoord2f[] t17 = new TexCoord2f[4];<a name="line.550"></a>
+<span class="sourceLineNo">551</span>                t17[0] = new TexCoord2f(0.40625f, 0.375f);<a name="line.551"></a>
+<span class="sourceLineNo">552</span>                t17[1] = new TexCoord2f(0.375f, 0.375f);<a name="line.552"></a>
+<span class="sourceLineNo">553</span>                t17[2] = new TexCoord2f(0.375f, 0.34375f);<a name="line.553"></a>
+<span class="sourceLineNo">554</span>                t17[3] = new TexCoord2f(0.40625f, 0.34375f);<a name="line.554"></a>
+<span class="sourceLineNo">555</span>                TexCoord2f[] t18 = new TexCoord2f[4];<a name="line.555"></a>
+<span class="sourceLineNo">556</span>                t18[0] = new TexCoord2f(0.25f, 0.375f);<a name="line.556"></a>
+<span class="sourceLineNo">557</span>                t18[1] = new TexCoord2f(0.28125f, 0.375f);<a name="line.557"></a>
+<span class="sourceLineNo">558</span>                t18[2] = new TexCoord2f(0.28125f, 0.40625f);<a name="line.558"></a>
+<span class="sourceLineNo">559</span>                t18[3] = new TexCoord2f(0.25f, 0.40625f);<a name="line.559"></a>
+<span class="sourceLineNo">560</span>                TexCoord2f[] t19 = new TexCoord2f[4];<a name="line.560"></a>
+<span class="sourceLineNo">561</span>                t19[0] = new TexCoord2f(0.40625f, 0.40625f);<a name="line.561"></a>
+<span class="sourceLineNo">562</span>                t19[1] = new TexCoord2f(0.375f, 0.40625f);<a name="line.562"></a>
+<span class="sourceLineNo">563</span>                t19[2] = new TexCoord2f(0.375f, 0.375f);<a name="line.563"></a>
+<span class="sourceLineNo">564</span>                t19[3] = new TexCoord2f(0.40625f, 0.375f);<a name="line.564"></a>
+<span class="sourceLineNo">565</span>                TexCoord2f[] t20 = new TexCoord2f[4];<a name="line.565"></a>
+<span class="sourceLineNo">566</span>                t20[0] = new TexCoord2f(0.375f, 0.484375f);<a name="line.566"></a>
+<span class="sourceLineNo">567</span>                t20[1] = new TexCoord2f(0.34375f, 0.484375f);<a name="line.567"></a>
+<span class="sourceLineNo">568</span>                t20[2] = new TexCoord2f(0.34375f, 0.453125f);<a name="line.568"></a>
+<span class="sourceLineNo">569</span>                t20[3] = new TexCoord2f(0.375f, 0.453125f);<a name="line.569"></a>
+<span class="sourceLineNo">570</span>                TexCoord2f[] t21 = new TexCoord2f[4];<a name="line.570"></a>
+<span class="sourceLineNo">571</span>                t21[0] = new TexCoord2f(0.375f, 0.375f);<a name="line.571"></a>
+<span class="sourceLineNo">572</span>                t21[1] = new TexCoord2f(0.34375f, 0.375f);<a name="line.572"></a>
+<span class="sourceLineNo">573</span>                t21[2] = new TexCoord2f(0.34375f, 0.34375f);<a name="line.573"></a>
+<span class="sourceLineNo">574</span>                t21[3] = new TexCoord2f(0.375f, 0.34375f);<a name="line.574"></a>
+<span class="sourceLineNo">575</span>                TexCoord2f[] t22 = new TexCoord2f[4];<a name="line.575"></a>
+<span class="sourceLineNo">576</span>                t22[0] = new TexCoord2f(0.28125f, 0.375f);<a name="line.576"></a>
+<span class="sourceLineNo">577</span>                t22[1] = new TexCoord2f(0.3125f, 0.375f);<a name="line.577"></a>
+<span class="sourceLineNo">578</span>                t22[2] = new TexCoord2f(0.3125f, 0.453125f);<a name="line.578"></a>
+<span class="sourceLineNo">579</span>                t22[3] = new TexCoord2f(0.28125f, 0.453125f);<a name="line.579"></a>
+<span class="sourceLineNo">580</span>                TexCoord2f[] t23 = new TexCoord2f[4];<a name="line.580"></a>
+<span class="sourceLineNo">581</span>                t23[0] = new TexCoord2f(0.375f, 0.453125f);<a name="line.581"></a>
+<span class="sourceLineNo">582</span>                t23[1] = new TexCoord2f(0.34375f, 0.453125f);<a name="line.582"></a>
+<span class="sourceLineNo">583</span>                t23[2] = new TexCoord2f(0.34375f, 0.375f);<a name="line.583"></a>
+<span class="sourceLineNo">584</span>                t23[3] = new TexCoord2f(0.375f, 0.375f);<a name="line.584"></a>
+<span class="sourceLineNo">585</span>                TexCoord2f[] t24 = new TexCoord2f[4];<a name="line.585"></a>
+<span class="sourceLineNo">586</span>                t24[0] = new TexCoord2f(0.421875f, 0.453125f);<a name="line.586"></a>
+<span class="sourceLineNo">587</span>                t24[1] = new TexCoord2f(0.421875f, 0.484375f);<a name="line.587"></a>
+<span class="sourceLineNo">588</span>                t24[2] = new TexCoord2f(0.375f, 0.484375f);<a name="line.588"></a>
+<span class="sourceLineNo">589</span>                t24[3] = new TexCoord2f(0.375f, 0.453125f);<a name="line.589"></a>
+<span class="sourceLineNo">590</span>                TexCoord2f[] t25 = new TexCoord2f[4];<a name="line.590"></a>
+<span class="sourceLineNo">591</span>                t25[0] = new TexCoord2f(0.3125f, 0.375f);<a name="line.591"></a>
+<span class="sourceLineNo">592</span>                t25[1] = new TexCoord2f(0.34375f, 0.375f);<a name="line.592"></a>
+<span class="sourceLineNo">593</span>                t25[2] = new TexCoord2f(0.34375f, 0.453125f);<a name="line.593"></a>
+<span class="sourceLineNo">594</span>                t25[3] = new TexCoord2f(0.3125f, 0.453125f);<a name="line.594"></a>
+<span class="sourceLineNo">595</span>                TexCoord2f[] t26 = new TexCoord2f[4];<a name="line.595"></a>
+<span class="sourceLineNo">596</span>                t26[0] = new TexCoord2f(0.375f, 0.484375f);<a name="line.596"></a>
+<span class="sourceLineNo">597</span>                t26[1] = new TexCoord2f(0.34375f, 0.484375f);<a name="line.597"></a>
+<span class="sourceLineNo">598</span>                t26[2] = new TexCoord2f(0.34375f, 0.453125f);<a name="line.598"></a>
+<span class="sourceLineNo">599</span>                t26[3] = new TexCoord2f(0.375f, 0.453125f);<a name="line.599"></a>
+<span class="sourceLineNo">600</span>                TexCoord2f[] t27 = new TexCoord2f[4];<a name="line.600"></a>
+<span class="sourceLineNo">601</span>                t27[0] = new TexCoord2f(0.375f, 0.375f);<a name="line.601"></a>
+<span class="sourceLineNo">602</span>                t27[1] = new TexCoord2f(0.34375f, 0.375f);<a name="line.602"></a>
+<span class="sourceLineNo">603</span>                t27[2] = new TexCoord2f(0.34375f, 0.34375f);<a name="line.603"></a>
+<span class="sourceLineNo">604</span>                t27[3] = new TexCoord2f(0.375f, 0.34375f);<a name="line.604"></a>
+<span class="sourceLineNo">605</span>                TexCoord2f[] t28 = new TexCoord2f[4];<a name="line.605"></a>
+<span class="sourceLineNo">606</span>                t28[0] = new TexCoord2f(0.28125f, 0.375f);<a name="line.606"></a>
+<span class="sourceLineNo">607</span>                t28[1] = new TexCoord2f(0.3125f, 0.375f);<a name="line.607"></a>
+<span class="sourceLineNo">608</span>                t28[2] = new TexCoord2f(0.3125f, 0.453125f);<a name="line.608"></a>
+<span class="sourceLineNo">609</span>                t28[3] = new TexCoord2f(0.28125f, 0.453125f);<a name="line.609"></a>
+<span class="sourceLineNo">610</span>                TexCoord2f[] t29 = new TexCoord2f[4];<a name="line.610"></a>
+<span class="sourceLineNo">611</span>                t29[0] = new TexCoord2f(0.375f, 0.453125f);<a name="line.611"></a>
+<span class="sourceLineNo">612</span>                t29[1] = new TexCoord2f(0.34375f, 0.453125f);<a name="line.612"></a>
+<span class="sourceLineNo">613</span>                t29[2] = new TexCoord2f(0.34375f, 0.375f);<a name="line.613"></a>
+<span class="sourceLineNo">614</span>                t29[3] = new TexCoord2f(0.375f, 0.375f);<a name="line.614"></a>
+<span class="sourceLineNo">615</span>                TexCoord2f[] t30 = new TexCoord2f[4];<a name="line.615"></a>
+<span class="sourceLineNo">616</span>                t30[0] = new TexCoord2f(0.421875f, 0.453125f);<a name="line.616"></a>
+<span class="sourceLineNo">617</span>                t30[1] = new TexCoord2f(0.421875f, 0.484375f);<a name="line.617"></a>
+<span class="sourceLineNo">618</span>                t30[2] = new TexCoord2f(0.375f, 0.484375f);<a name="line.618"></a>
+<span class="sourceLineNo">619</span>                t30[3] = new TexCoord2f(0.375f, 0.453125f);<a name="line.619"></a>
+<span class="sourceLineNo">620</span>                TexCoord2f[] t31 = new TexCoord2f[4];<a name="line.620"></a>
+<span class="sourceLineNo">621</span>                t31[0] = new TexCoord2f(0.3125f, 0.375f);<a name="line.621"></a>
+<span class="sourceLineNo">622</span>                t31[1] = new TexCoord2f(0.34375f, 0.375f);<a name="line.622"></a>
+<span class="sourceLineNo">623</span>                t31[2] = new TexCoord2f(0.34375f, 0.453125f);<a name="line.623"></a>
+<span class="sourceLineNo">624</span>                t31[3] = new TexCoord2f(0.3125f, 0.453125f);<a name="line.624"></a>
+<span class="sourceLineNo">625</span>                //32 has been skipped<a name="line.625"></a>
+<span class="sourceLineNo">626</span>                TexCoord2f[] t33 = new TexCoord2f[4];<a name="line.626"></a>
+<span class="sourceLineNo">627</span>                t33[1] = new TexCoord2f(0.0625f, 0.5f);<a name="line.627"></a>
+<span class="sourceLineNo">628</span>                t33[2] = new TexCoord2f(0.0625f, 0.34375f);<a name="line.628"></a>
+<span class="sourceLineNo">629</span>                t33[3] = new TexCoord2f(0.078125f, 0.34375f);<a name="line.629"></a>
+<span class="sourceLineNo">630</span>                t33[0] = new TexCoord2f(0.078125f, 0.5f);<a name="line.630"></a>
+<span class="sourceLineNo">631</span>                TexCoord2f[] t34 = new TexCoord2f[4];<a name="line.631"></a>
+<span class="sourceLineNo">632</span>                t34[0] = new TexCoord2f(0.0625f, 0.5f);<a name="line.632"></a>
+<span class="sourceLineNo">633</span>                t34[1] = new TexCoord2f(0.0f, 0.5f);<a name="line.633"></a>
+<span class="sourceLineNo">634</span>                t34[2] = new TexCoord2f(0.0f, 0.34375f);<a name="line.634"></a>
+<span class="sourceLineNo">635</span>                t34[3] = new TexCoord2f(0.0625f, 0.34375f);<a name="line.635"></a>
+<span class="sourceLineNo">636</span>                TexCoord2f[] t35 = new TexCoord2f[4];<a name="line.636"></a>
+<span class="sourceLineNo">637</span>                t35[3] = new TexCoord2f(0.15625f, 0.5f);<a name="line.637"></a>
+<span class="sourceLineNo">638</span>                t35[0] = new TexCoord2f(0.140625f, 0.5f);<a name="line.638"></a>
+<span class="sourceLineNo">639</span>                t35[1] = new TexCoord2f(0.140625f, 0.34375f);<a name="line.639"></a>
+<span class="sourceLineNo">640</span>                t35[2] = new TexCoord2f(0.15625f, 0.34375f);<a name="line.640"></a>
+<span class="sourceLineNo">641</span>                TexCoord2f[] t36 = new TexCoord2f[4];<a name="line.641"></a>
+<span class="sourceLineNo">642</span>                t36[0] = new TexCoord2f(0.140625f, 0.5f);<a name="line.642"></a>
+<span class="sourceLineNo">643</span>                t36[1] = new TexCoord2f(0.078125f, 0.5f);<a name="line.643"></a>
+<span class="sourceLineNo">644</span>                t36[2] = new TexCoord2f(0.078125f, 0.34375f);<a name="line.644"></a>
+<span class="sourceLineNo">645</span>                t36[3] = new TexCoord2f(0.140625f, 0.34375f);<a name="line.645"></a>
+<span class="sourceLineNo">646</span>                TexCoord2f[] t37 = new TexCoord2f[4];<a name="line.646"></a>
+<span class="sourceLineNo">647</span>                t37[0] = new TexCoord2f(0.0625f, 0.515625f);<a name="line.647"></a>
+<span class="sourceLineNo">648</span>                t37[1] = new TexCoord2f(0.0f, 0.515625f);<a name="line.648"></a>
+<span class="sourceLineNo">649</span>                t37[2] = new TexCoord2f(0.0f, 0.5f);<a name="line.649"></a>
+<span class="sourceLineNo">650</span>                t37[3] = new TexCoord2f(0.0625f, 0.5f);<a name="line.650"></a>
+<span class="sourceLineNo">651</span><a name="line.651"></a>
+<span class="sourceLineNo">652</span>                qa[0].setNormals(0, npz);<a name="line.652"></a>
+<span class="sourceLineNo">653</span>                qa[1].setNormals(0, nmz);<a name="line.653"></a>
+<span class="sourceLineNo">654</span>                qa[2].setNormals(0, nmx);<a name="line.654"></a>
+<span class="sourceLineNo">655</span>                qa[3].setNormals(0, npx);<a name="line.655"></a>
+<span class="sourceLineNo">656</span>                qa[4].setNormals(0, npy);<a name="line.656"></a>
+<span class="sourceLineNo">657</span>                qa[5].setNormals(0, nmy);<a name="line.657"></a>
+<span class="sourceLineNo">658</span>                qa[6].setNormals(0, npz);<a name="line.658"></a>
+<span class="sourceLineNo">659</span>                qa[7].setNormals(0, nmz);<a name="line.659"></a>
+<span class="sourceLineNo">660</span>                qa[8].setNormals(0, nmx);<a name="line.660"></a>
+<span class="sourceLineNo">661</span>                qa[9].setNormals(0, npx);<a name="line.661"></a>
+<span class="sourceLineNo">662</span>                qa[10].setNormals(0, npy);<a name="line.662"></a>
+<span class="sourceLineNo">663</span>                qa[11].setNormals(0, nmy);<a name="line.663"></a>
+<span class="sourceLineNo">664</span>                qar[6].setNormals(0, npz);<a name="line.664"></a>
+<span class="sourceLineNo">665</span>                qar[7].setNormals(0, nmz);<a name="line.665"></a>
+<span class="sourceLineNo">666</span>                qar[8].setNormals(0, nmx);<a name="line.666"></a>
+<span class="sourceLineNo">667</span>                qar[9].setNormals(0, npx);<a name="line.667"></a>
+<span class="sourceLineNo">668</span>                qal[6].setNormals(0, npz);<a name="line.668"></a>
+<span class="sourceLineNo">669</span>                qal[7].setNormals(0, nmz);<a name="line.669"></a>
+<span class="sourceLineNo">670</span>                qal[8].setNormals(0, nmx);<a name="line.670"></a>
+<span class="sourceLineNo">671</span>                qal[9].setNormals(0, npx);<a name="line.671"></a>
+<span class="sourceLineNo">672</span>                qar[0].setNormals(0, npz);<a name="line.672"></a>
+<span class="sourceLineNo">673</span>                qar[1].setNormals(0, nmz);<a name="line.673"></a>
+<span class="sourceLineNo">674</span>                qar[2].setNormals(0, nmx);<a name="line.674"></a>
+<span class="sourceLineNo">675</span>                qar[3].setNormals(0, npx);<a name="line.675"></a>
+<span class="sourceLineNo">676</span>                qar[4].setNormals(0, npy);<a name="line.676"></a>
+<span class="sourceLineNo">677</span>                qar[5].setNormals(0, nmy);<a name="line.677"></a>
+<span class="sourceLineNo">678</span>                qal[0].setNormals(0, npz);<a name="line.678"></a>
+<span class="sourceLineNo">679</span>                qal[1].setNormals(0, nmz);<a name="line.679"></a>
+<span class="sourceLineNo">680</span>                qal[2].setNormals(0, nmx);<a name="line.680"></a>
+<span class="sourceLineNo">681</span>                qal[3].setNormals(0, npx);<a name="line.681"></a>
+<span class="sourceLineNo">682</span>                qal[4].setNormals(0, npy);<a name="line.682"></a>
+<span class="sourceLineNo">683</span>                qal[5].setNormals(0, nmy);<a name="line.683"></a>
+<span class="sourceLineNo">684</span>                qa[12].setNormals(0, nmx);<a name="line.684"></a>
+<span class="sourceLineNo">685</span>                qa[13].setNormals(0, nbd);<a name="line.685"></a>
+<span class="sourceLineNo">686</span>                qa[14].setNormals(0, npx);<a name="line.686"></a>
+<span class="sourceLineNo">687</span>                qa[15].setNormals(0, nfu);<a name="line.687"></a>
+<span class="sourceLineNo">688</span>                qa[16].setNormals(0, nbu);<a name="line.688"></a>
+<span class="sourceLineNo">689</span>                qa[17].setNormals(0, npz);<a name="line.689"></a>
+<span class="sourceLineNo">690</span>                qa[18].setNormals(0, nmz);<a name="line.690"></a>
+<span class="sourceLineNo">691</span>                qa[19].setNormals(0, nmx);<a name="line.691"></a>
+<span class="sourceLineNo">692</span>                qa[20].setNormals(0, npx);<a name="line.692"></a>
+<span class="sourceLineNo">693</span>                qa[21].setNormals(0, npy);<a name="line.693"></a>
+<span class="sourceLineNo">694</span>                qa[22].setNormals(0, nmy);<a name="line.694"></a>
+<span class="sourceLineNo">695</span>                qa[23].setNormals(0, npz);<a name="line.695"></a>
+<span class="sourceLineNo">696</span>                qa[24].setNormals(0, nmz);<a name="line.696"></a>
+<span class="sourceLineNo">697</span>                qa[25].setNormals(0, nmx);<a name="line.697"></a>
+<span class="sourceLineNo">698</span>                qa[26].setNormals(0, npx);<a name="line.698"></a>
+<span class="sourceLineNo">699</span>                qa[27].setNormals(0, npy);<a name="line.699"></a>
+<span class="sourceLineNo">700</span>                qa[28].setNormals(0, nmy);<a name="line.700"></a>
+<span class="sourceLineNo">701</span><a name="line.701"></a>
+<span class="sourceLineNo">702</span>                qa[0].setTextureCoordinates(0, 0, t0);<a name="line.702"></a>
+<span class="sourceLineNo">703</span>                qa[1].setTextureCoordinates(0, 0, t1);<a name="line.703"></a>
+<span class="sourceLineNo">704</span>                qa[2].setTextureCoordinates(0, 0, t2);<a name="line.704"></a>
+<span class="sourceLineNo">705</span>                qa[3].setTextureCoordinates(0, 0, t3);<a name="line.705"></a>
+<span class="sourceLineNo">706</span>                qa[4].setTextureCoordinates(0, 0, t4);<a name="line.706"></a>
+<span class="sourceLineNo">707</span>                qa[5].setTextureCoordinates(0, 0, t5);<a name="line.707"></a>
+<span class="sourceLineNo">708</span>                qa[6].setTextureCoordinates(0, 0, t6);<a name="line.708"></a>
+<span class="sourceLineNo">709</span>                qa[7].setTextureCoordinates(0, 0, t7);<a name="line.709"></a>
+<span class="sourceLineNo">710</span>                qa[8].setTextureCoordinates(0, 0, t8);<a name="line.710"></a>
+<span class="sourceLineNo">711</span>                qa[9].setTextureCoordinates(0, 0, t9);<a name="line.711"></a>
+<span class="sourceLineNo">712</span>                qa[10].setTextureCoordinates(0, 0, t10);<a name="line.712"></a>
+<span class="sourceLineNo">713</span>                qa[11].setTextureCoordinates(0, 0, t11);<a name="line.713"></a>
+<span class="sourceLineNo">714</span>                qar[6].setTextureCoordinates(0, 0, t12);<a name="line.714"></a>
+<span class="sourceLineNo">715</span>                qar[7].setTextureCoordinates(0, 0, t13);<a name="line.715"></a>
+<span class="sourceLineNo">716</span>                qar[8].setTextureCoordinates(0, 0, t14);<a name="line.716"></a>
+<span class="sourceLineNo">717</span>                qar[9].setTextureCoordinates(0, 0, t15);<a name="line.717"></a>
+<span class="sourceLineNo">718</span>                qal[6].setTextureCoordinates(0, 0, t16);<a name="line.718"></a>
+<span class="sourceLineNo">719</span>                qal[7].setTextureCoordinates(0, 0, t17);<a name="line.719"></a>
+<span class="sourceLineNo">720</span>                qal[8].setTextureCoordinates(0, 0, t18);<a name="line.720"></a>
+<span class="sourceLineNo">721</span>                qal[9].setTextureCoordinates(0, 0, t19);<a name="line.721"></a>
+<span class="sourceLineNo">722</span>                qar[0].setTextureCoordinates(0, 0, t20);<a name="line.722"></a>
+<span class="sourceLineNo">723</span>                qar[1].setTextureCoordinates(0, 0, t21);<a name="line.723"></a>
+<span class="sourceLineNo">724</span>                qar[2].setTextureCoordinates(0, 0, t22);<a name="line.724"></a>
+<span class="sourceLineNo">725</span>                qar[3].setTextureCoordinates(0, 0, t23);<a name="line.725"></a>
+<span class="sourceLineNo">726</span>                qar[4].setTextureCoordinates(0, 0, t24);<a name="line.726"></a>
+<span class="sourceLineNo">727</span>                qar[5].setTextureCoordinates(0, 0, t25);<a name="line.727"></a>
+<span class="sourceLineNo">728</span>                qal[0].setTextureCoordinates(0, 0, t26);<a name="line.728"></a>
+<span class="sourceLineNo">729</span>                qal[1].setTextureCoordinates(0, 0, t27);<a name="line.729"></a>
+<span class="sourceLineNo">730</span>                qal[2].setTextureCoordinates(0, 0, t28);<a name="line.730"></a>
+<span class="sourceLineNo">731</span>                qal[3].setTextureCoordinates(0, 0, t29);<a name="line.731"></a>
+<span class="sourceLineNo">732</span>                qal[4].setTextureCoordinates(0, 0, t30);<a name="line.732"></a>
+<span class="sourceLineNo">733</span>                qal[5].setTextureCoordinates(0, 0, t31);<a name="line.733"></a>
+<span class="sourceLineNo">734</span>                qa[12].setTextureCoordinates(0, 0, t33);<a name="line.734"></a>
+<span class="sourceLineNo">735</span>                qa[13].setTextureCoordinates(0, 0, t34);<a name="line.735"></a>
+<span class="sourceLineNo">736</span>                qa[14].setTextureCoordinates(0, 0, t35);<a name="line.736"></a>
+<span class="sourceLineNo">737</span>                qa[15].setTextureCoordinates(0, 0, t36);<a name="line.737"></a>
+<span class="sourceLineNo">738</span>                qa[16].setTextureCoordinates(0, 0, t37);<a name="line.738"></a>
+<span class="sourceLineNo">739</span><a name="line.739"></a>
+<span class="sourceLineNo">740</span>                Appearance a = new Appearance();<a name="line.740"></a>
+<span class="sourceLineNo">741</span>                a.setMaterial(m);<a name="line.741"></a>
+<span class="sourceLineNo">742</span>                Shape3D s3d = new Shape3D();<a name="line.742"></a>
+<span class="sourceLineNo">743</span>                s3d.setCapability(Shape3D.ALLOW_GEOMETRY_READ);<a name="line.743"></a>
+<span class="sourceLineNo">744</span>                for (int i = 0; i &lt; qa.length; i++) {<a name="line.744"></a>
+<span class="sourceLineNo">745</span>                        s3d.addGeometry(qa[i]);<a name="line.745"></a>
+<span class="sourceLineNo">746</span>                }<a name="line.746"></a>
+<span class="sourceLineNo">747</span>                TextureLoader tl = new TextureLoader("beaver.jpg", null);<a name="line.747"></a>
+<span class="sourceLineNo">748</span>                a.setTexture(tl.getTexture());<a name="line.748"></a>
+<span class="sourceLineNo">749</span>                TextureAttributes ta = new TextureAttributes();<a name="line.749"></a>
+<span class="sourceLineNo">750</span>                ta.setTextureMode(<a name="line.750"></a>
+<span class="sourceLineNo">751</span>                        TextureAttributes.MODULATE<a name="line.751"></a>
+<span class="sourceLineNo">752</span>                );<a name="line.752"></a>
+<span class="sourceLineNo">753</span>                a.setTextureAttributes(ta);<a name="line.753"></a>
+<span class="sourceLineNo">754</span>                s3d.setAppearance(a);<a name="line.754"></a>
+<span class="sourceLineNo">755</span>                addChild(s3d);<a name="line.755"></a>
+<span class="sourceLineNo">756</span>                s3d = new Shape3D();<a name="line.756"></a>
+<span class="sourceLineNo">757</span>                s3d.setCapability(Shape3D.ALLOW_GEOMETRY_READ);<a name="line.757"></a>
+<span class="sourceLineNo">758</span>                for (int i = 0; i &lt; qal.length; i++) {<a name="line.758"></a>
+<span class="sourceLineNo">759</span>                        s3d.addGeometry(qal[i]);<a name="line.759"></a>
+<span class="sourceLineNo">760</span>                }<a name="line.760"></a>
+<span class="sourceLineNo">761</span>                s3d.setAppearance(a);<a name="line.761"></a>
+<span class="sourceLineNo">762</span>                tgl = new TransformGroup();<a name="line.762"></a>
+<span class="sourceLineNo">763</span>                tgl.addChild(s3d);<a name="line.763"></a>
+<span class="sourceLineNo">764</span>                tgl.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);<a name="line.764"></a>
+<span class="sourceLineNo">765</span>                tgl.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);<a name="line.765"></a>
+<span class="sourceLineNo">766</span>                addChild(tgl);<a name="line.766"></a>
+<span class="sourceLineNo">767</span>                s3d = new Shape3D();<a name="line.767"></a>
+<span class="sourceLineNo">768</span>                s3d.setCapability(Shape3D.ALLOW_GEOMETRY_READ);<a name="line.768"></a>
+<span class="sourceLineNo">769</span>                for (int i = 0; i &lt; qar.length; i++) {<a name="line.769"></a>
+<span class="sourceLineNo">770</span>                        s3d.addGeometry(qar[i]);<a name="line.770"></a>
+<span class="sourceLineNo">771</span>                }<a name="line.771"></a>
+<span class="sourceLineNo">772</span>                s3d.setAppearance(a);<a name="line.772"></a>
+<span class="sourceLineNo">773</span>                tgr = new TransformGroup();<a name="line.773"></a>
+<span class="sourceLineNo">774</span>                tgr.addChild(s3d);<a name="line.774"></a>
+<span class="sourceLineNo">775</span>                tgr.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);<a name="line.775"></a>
+<span class="sourceLineNo">776</span>                tgr.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);<a name="line.776"></a>
+<span class="sourceLineNo">777</span>                addChild(tgr);<a name="line.777"></a>
+<span class="sourceLineNo">778</span>                Transform3D t3d = new Transform3D();<a name="line.778"></a>
+<span class="sourceLineNo">779</span>                t3d.setRotation(new AxisAngle4f(0.0f, 0.0f, 1.0f, (float) Math.PI / 2.0f));<a name="line.779"></a>
+<span class="sourceLineNo">780</span>                PositionInterpolator pil = new PositionInterpolator(<a name="line.780"></a>
+<span class="sourceLineNo">781</span>                        new Alpha(<a name="line.781"></a>
+<span class="sourceLineNo">782</span>                                -1,<a name="line.782"></a>
+<span class="sourceLineNo">783</span>                                Alpha.INCREASING_ENABLE | Alpha.DECREASING_ENABLE,<a name="line.783"></a>
+<span class="sourceLineNo">784</span>                                0,<a name="line.784"></a>
+<span class="sourceLineNo">785</span>                                0,<a name="line.785"></a>
+<span class="sourceLineNo">786</span>                                500,<a name="line.786"></a>
+<span class="sourceLineNo">787</span>                                0,<a name="line.787"></a>
+<span class="sourceLineNo">788</span>                                0,<a name="line.788"></a>
+<span class="sourceLineNo">789</span>                                500,<a name="line.789"></a>
+<span class="sourceLineNo">790</span>                                0,<a name="line.790"></a>
+<span class="sourceLineNo">791</span>                                0<a name="line.791"></a>
+<span class="sourceLineNo">792</span>                        ),<a name="line.792"></a>
+<span class="sourceLineNo">793</span>                        tgl,<a name="line.793"></a>
+<span class="sourceLineNo">794</span>                        t3d,<a name="line.794"></a>
+<span class="sourceLineNo">795</span>                        0.0f,<a name="line.795"></a>
+<span class="sourceLineNo">796</span>                        0.1f<a name="line.796"></a>
+<span class="sourceLineNo">797</span>                );<a name="line.797"></a>
+<span class="sourceLineNo">798</span>                pil.setSchedulingBounds(infiniteBounds);<a name="line.798"></a>
+<span class="sourceLineNo">799</span>                addChild(pil);<a name="line.799"></a>
+<span class="sourceLineNo">800</span>                PositionInterpolator pir = new PositionInterpolator(<a name="line.800"></a>
+<span class="sourceLineNo">801</span>                        new Alpha(<a name="line.801"></a>
+<span class="sourceLineNo">802</span>                                -1,<a name="line.802"></a>
+<span class="sourceLineNo">803</span>                                Alpha.INCREASING_ENABLE | Alpha.DECREASING_ENABLE,<a name="line.803"></a>
+<span class="sourceLineNo">804</span>                                0,<a name="line.804"></a>
+<span class="sourceLineNo">805</span>                                500,<a name="line.805"></a>
+<span class="sourceLineNo">806</span>                                500,<a name="line.806"></a>
+<span class="sourceLineNo">807</span>                                0,<a name="line.807"></a>
+<span class="sourceLineNo">808</span>                                0,<a name="line.808"></a>
+<span class="sourceLineNo">809</span>                                500,<a name="line.809"></a>
+<span class="sourceLineNo">810</span>                                0,<a name="line.810"></a>
+<span class="sourceLineNo">811</span>                                0<a name="line.811"></a>
+<span class="sourceLineNo">812</span>                        ),<a name="line.812"></a>
+<span class="sourceLineNo">813</span>                        tgr,<a name="line.813"></a>
+<span class="sourceLineNo">814</span>                        t3d,<a name="line.814"></a>
+<span class="sourceLineNo">815</span>                        0.0f,<a name="line.815"></a>
+<span class="sourceLineNo">816</span>                        0.1f<a name="line.816"></a>
+<span class="sourceLineNo">817</span>                );<a name="line.817"></a>
+<span class="sourceLineNo">818</span>                pir.setSchedulingBounds(infiniteBounds);<a name="line.818"></a>
+<span class="sourceLineNo">819</span>                addChild(pir);<a name="line.819"></a>
+<span class="sourceLineNo">820</span>        }<a name="line.820"></a>
+<span class="sourceLineNo">821</span>}<a name="line.821"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
